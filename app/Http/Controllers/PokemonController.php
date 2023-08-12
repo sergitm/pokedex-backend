@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Pokemon;
 use Illuminate\Http\Request;
 
 class PokemonController extends Controller
@@ -11,6 +12,11 @@ class PokemonController extends Controller
         $client = new \GuzzleHttp\Client(['verify' => false]);
         $response = $client->get('https://pokeapi.co/api/v2/pokemon');
         $data = json_decode($response->getBody());
-        return response()->json($data->results);
+        $pokemon_array = array();
+        foreach ($data->results as $poke) {
+            $pokemon = new Pokemon($poke->url);
+            array_push($pokemon_array, $pokemon);
+        }
+        return response()->json($pokemon_array, 200);
     }
 }
