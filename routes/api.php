@@ -16,3 +16,4 @@ use App\Http\Controllers\PokemonController;
 */
 
 Route::get('/pokemon/all', 'App\Http\Controllers\PokemonController@all');
+Route::get('/pokemon/types', 'App\Http\Controllers\PokemonController@types');

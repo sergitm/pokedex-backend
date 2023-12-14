@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Pokemon;
-use Illuminate\Http\Request;
 
 class PokemonController extends Controller
 {
@@ -18,5 +17,15 @@ class PokemonController extends Controller
             array_push($pokemon_array, $pokemon);
         }
         return response()->json($pokemon_array, 200);
+    }
+
+    public function types(){
+        $client = new \GuzzleHttp\Client(['verify' => false]);
+        $response = $client->get('https://pokeapi.co/api/v2/type');
+        $data = json_decode($response->getBody());
+        $types_array = array_filter($data->results, function($type){
+            return $type->name != "unknown" && $type->name != "shadow";
+        });
+        return response()->json($types_array, 200);
     }
 }
