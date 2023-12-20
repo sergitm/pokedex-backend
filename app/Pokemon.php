@@ -19,7 +19,7 @@ class Pokemon {
         $this->types = $data['types'];
         $this->weight = $data['weight'];
         $this->height = $data['height'];
-        $this->pkdex_number = $data['order'];
+        $this->pkdex_number = $data['id'];
         $this->img = $data['sprites']['other']['official-artwork']['front_default'];
     }
 }
