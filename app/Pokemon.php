@@ -10,10 +10,12 @@ class Pokemon {
     public $pkdex_number;
     public $img;
 
-    public function __construct($url = null) {
-        $client = new \GuzzleHttp\Client(['verify' => false]);
-        $response = $client->get($url);
-        $data = json_decode($response->getBody(), true);
+    public function __construct($url = null, $data = null) {
+        if($data === null){
+            $client = new \GuzzleHttp\Client(['verify' => false]);
+            $response = $client->get($url);
+            $data = json_decode($response->getBody(), true);
+        }
 
         $this->name = $data['name'];
         $this->types = $data['types'];

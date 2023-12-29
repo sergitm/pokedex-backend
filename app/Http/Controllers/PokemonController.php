@@ -55,7 +55,12 @@ class PokemonController extends Controller
 
     public function getPokemon($id){
         $api = new PokeApi();
-        $response = $api->pokemon($id);
-        return $response;
+        $response = json_decode($api->pokemon($id), true);
+        $pokemon = new Pokemon(null, $response);
+        $result = array(
+            "count" => 1,
+            "results" => $pokemon
+        );
+        return response()->json($result, 200);
     }
 }
