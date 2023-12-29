@@ -52,4 +52,10 @@ class PokemonController extends Controller
         $response = $api->pokemonType($type);
         return $response;
     }
+
+    public function getPokemon($id){
+        $api = new PokeApi();
+        $response = $api->pokemon($id);
+        return $response;
+    }
 }
