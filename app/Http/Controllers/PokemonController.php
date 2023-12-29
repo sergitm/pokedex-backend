@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Pokemon;
+use PokePHP\PokeApi;
 
 class PokemonController extends Controller
 {
@@ -39,5 +40,16 @@ class PokemonController extends Controller
             return $type->name != "unknown" && $type->name != "shadow";
         });
         return response()->json($types_array, 200);
+    }
+
+    public function getPokemonByType($type, $pageQuery)
+    {
+        $limit = 20;
+        $page = (intval($pageQuery) > 1) ? intval($pageQuery) : 1;
+        $offset = $limit * ($page - 1);
+
+        $api = new PokeApi();
+        $response = $api->pokemonType($type);
+        return $response;
     }
 }
