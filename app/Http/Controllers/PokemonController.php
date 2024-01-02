@@ -48,9 +48,16 @@ class PokemonController extends Controller
         $page = (intval($pageQuery) > 1) ? intval($pageQuery) : 1;
         $offset = $limit * ($page - 1);
 
-        $api = new PokeApi();
-        $response = $api->pokemonType($type);
-        return $response;
+        $client = new \GuzzleHttp\Client(['verify' => false]);
+        $response = $client->get('https://pokeapi.co/api/v2/type/' . $type . '/?limit=' . $limit . '&offset=' . $offset);
+        $data = json_decode($response->getBody());
+        $pokemon = array_slice($data->pokemon, $offset, $limit);
+        $array_result = array();
+        foreach ($pokemon as $item) {
+            $poke = new Pokemon($item->pokemon->url);
+            array_push($array_result, $poke);
+        }
+        return response()->json($array_result, 200);
     }
 
     public function getPokemon($id){
