@@ -66,7 +66,7 @@ class PokemonController extends Controller
         $pokemon = new Pokemon(null, $response);
         $result = array(
             "count" => 1,
-            "results" => $pokemon
+            "results" => array($pokemon)
         );
         return response()->json($result, 200);
     }
