@@ -22,6 +22,6 @@ class Pokemon {
         $this->weight = $data['weight'];
         $this->height = $data['height'];
         $this->pkdex_number = $data['id'];
-        $this->img = $data['sprites']['other']['official-artwork']['front_default'];
+        $this->img = $data['sprites']['other']['official-artwork']['front_default'] ?? $data['sprites']['other']['home']['front_default'];
     }
 }
