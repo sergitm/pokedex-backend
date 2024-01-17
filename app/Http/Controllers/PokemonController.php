@@ -12,26 +12,25 @@ class PokemonController extends Controller
     {
         $page = (intval($pageQuery) > 1) ? intval($pageQuery) : 1;
         
-        $result = Cache::remember('pokemon-page'.$page, now()->addDay(), function() use ($page) {
-            $limit = 20;
-            $offset = $limit * ($page - 1);
-            $client = new \GuzzleHttp\Client(['verify' => false]);
-            $response = $client->get('https://pokeapi.co/api/v2/pokemon?limit=' . $limit . '&offset=' . $offset);
-            $data = json_decode($response->getBody());
-            $count = $data->count;
-            $pages = ceil(intval($count) / 20);
-            $pokemon_array = array();
-            foreach ($data->results as $poke) {
-                $pokemon = new Pokemon($poke->url);
-                array_push($pokemon_array, $pokemon);
-            }
-            $result = array(
-                "count" => $count,
-                "pages" => $pages,
-                "results" => $pokemon_array
-            );
-            return $result;
-        });
+        $limit = 20;
+        $offset = $limit * ($page - 1);
+        $client = new \GuzzleHttp\Client(['verify' => false]);
+        $response = $client->get('https://pokeapi.co/api/v2/pokemon?limit=' . $limit . '&offset=' . $offset);
+        $data = json_decode($response->getBody());
+        $count = $data->count;
+        $pages = ceil(intval($count) / 20);
+        $pokemon_array = array();
+        foreach ($data->results as $poke) {
+            $pokemon = Cache::remember($poke->name, now()->addDay(), function() use ($poke) {
+                return new Pokemon($poke->url);
+            });
+            array_push($pokemon_array, $pokemon);
+        }
+        $result = array(
+            "count" => $count,
+            "pages" => $pages,
+            "results" => $pokemon_array
+        );
 
         return response()->json($result, 200);
     }
@@ -50,22 +49,34 @@ class PokemonController extends Controller
         return response()->json($types_array, 200);
     }
 
-    public function getPokemonByType($type, $pageQuery)
+    public function getPokemonByType($type1, $type2, $pageQuery)
     {
         $limit = 20;
         $page = (intval($pageQuery) > 1) ? intval($pageQuery) : 1;
         $offset = $limit * ($page - 1);
 
         $client = new \GuzzleHttp\Client(['verify' => false]);
-        $response = $client->get('https://pokeapi.co/api/v2/type/' . $type . '/?limit=' . $limit . '&offset=' . $offset);
+        $response = $client->get('https://pokeapi.co/api/v2/type/' . $type1 . '/?limit=' . $limit . '&offset=' . $offset);
         $data = json_decode($response->getBody());
-        $pokemon = array_slice($data->pokemon, $offset, $limit);
-        $array_result = array();
-        foreach ($pokemon as $item) {
-            $poke = new Pokemon($item->pokemon->url);
-            array_push($array_result, $poke);
+        
+        if($type2 != 'none'){
+            $data->pokemon = array_filter($data->pokemon, function($pokemon) use ($type2) {
+                $poke = Cache::remember($pokemon->pokemon->name, now()->addDay(), function() use ($pokemon) {
+                    return new Pokemon($pokemon->pokemon->url);
+                });
+                return count($poke->types) == 2 && $poke->types[1]['type']['name'] == $type2;
+            });
         }
-        return response()->json($array_result, 200);
+
+        $pokemon = array_slice($data->pokemon, $offset, $limit);
+        $result = array();
+        foreach ($pokemon as $item) {
+            $newPoke = Cache::remember($item->pokemon->name, now()->addDay(), function() use ($item) {
+                return new Pokemon($item->pokemon->url);
+            });
+            array_push($result, $newPoke);
+        }
+        return response()->json($result, 200);
     }
 
     public function getPokemon($id){
