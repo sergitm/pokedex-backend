@@ -51,6 +51,10 @@ class PokemonController extends Controller
 
     public function getPokemonByType($type1, $type2, $pageQuery)
     {
+        if ($type1 === 'none') {
+            $type1 = $type2;
+            $type2 = 'none';
+        }
         $limit = 20;
         $page = (intval($pageQuery) > 1) ? intval($pageQuery) : 1;
         $offset = $limit * ($page - 1);
