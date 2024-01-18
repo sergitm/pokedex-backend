@@ -64,7 +64,7 @@ class PokemonController extends Controller
                 $poke = Cache::remember($pokemon->pokemon->name, now()->addDay(), function() use ($pokemon) {
                     return new Pokemon($pokemon->pokemon->url);
                 });
-                return count($poke->types) == 2 && $poke->types[1]['type']['name'] == $type2;
+                return count($poke->types) == 2 && ($poke->types[1]['type']['name'] == $type2 || $poke->types[0]['type']['name'] == $type2);
             });
         }
         $count = count($data->pokemon);
