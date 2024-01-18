@@ -67,15 +67,21 @@ class PokemonController extends Controller
                 return count($poke->types) == 2 && $poke->types[1]['type']['name'] == $type2;
             });
         }
-
+        $count = count($data->pokemon);
+        $pages = ceil(intval($count) / 20);
         $pokemon = array_slice($data->pokemon, $offset, $limit);
-        $result = array();
+        $list = array();
         foreach ($pokemon as $item) {
             $newPoke = Cache::remember($item->pokemon->name, now()->addDay(), function() use ($item) {
                 return new Pokemon($item->pokemon->url);
             });
-            array_push($result, $newPoke);
+            array_push($list, $newPoke);
         }
+        $result = array(
+            "count" => $count,
+            "pages" => $pages,
+            "results" => $list
+        );
         return response()->json($result, 200);
     }
 
