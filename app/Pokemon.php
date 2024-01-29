@@ -9,6 +9,7 @@ class Pokemon {
     public $height;
     public $pkdex_number;
     public $img;
+    public $shiny_img;
 
     public function __construct($url = null, $data = null) {
         if($data === null){
@@ -23,5 +24,6 @@ class Pokemon {
         $this->height = $data['height'];
         $this->pkdex_number = $data['id'];
         $this->img = $data['sprites']['other']['official-artwork']['front_default'] ?? $data['sprites']['other']['home']['front_default'];
+        $this->shiny_img = $data['sprites']['other']['official-artwork']['front_shiny'] ?? $data['sprites']['other']['home']['front_shiny'];
     }
 }
