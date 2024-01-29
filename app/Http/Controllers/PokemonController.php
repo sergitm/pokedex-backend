@@ -8,6 +8,7 @@ use PokePHP\PokeApi;
 
 class PokemonController extends Controller
 {
+    // Gets 20 pokemon by given page, ordered by Pokedex number
     public function get20Pokemon($pageQuery)
     {
         $page = (intval($pageQuery) > 1) ? intval($pageQuery) : 1;
@@ -35,6 +36,7 @@ class PokemonController extends Controller
         return response()->json($result, 200);
     }
 
+    // Gets all types from PokeAPI
     public function types()
     {
         $types_array = Cache::remember('types', now()->addDay(), function() {
@@ -49,6 +51,7 @@ class PokemonController extends Controller
         return response()->json($types_array, 200);
     }
 
+    // Gets pokemon by Type and Page from PokeAPI, caches on first load
     public function getPokemonByType($type1, $type2, $pageQuery)
     {
         if ($type1 === 'none') {
@@ -89,6 +92,7 @@ class PokemonController extends Controller
         return response()->json($result, 200);
     }
 
+    // Gets single pokemon based on id (which can be name or pokedex number)
     public function getPokemon($id){
         $api = new PokeApi();
         $response = json_decode($api->pokemon($id), true);

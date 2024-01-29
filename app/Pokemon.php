@@ -3,6 +3,7 @@
 namespace App;
 
 class Pokemon {
+    // Properties
     public $name;
     public $types;
     public $weight;
@@ -11,6 +12,7 @@ class Pokemon {
     public $img;
     public $shiny_img;
 
+    // Constructor based on given URL or DATA from PokeAPI
     public function __construct($url = null, $data = null) {
         if($data === null){
             $client = new \GuzzleHttp\Client(['verify' => false]);
